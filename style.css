@@ -5,20 +5,20 @@ body {
     min-height: 100vh;
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    background-color: darkseagreen;
 }
 .container {
     text-align: center;
-    background: white;
+    background: darkseagreen;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
-h1 { color: #333; }
+h1 { color: white; }
 a, button {
     display: inline-block;
     padding: 10px 20px;
-    background-color: #4CAF50;
+    background-color: darkgreen;
     color: white;
     text-decoration: none;
     border: none;
@@ -26,7 +26,7 @@ a, button {
     cursor: pointer;
     margin: 10px;
 }
-a:hover, button:hover { background-color: #45a049; }
+a:hover, button:hover { background-color: darkslateblue; }
 .question { margin: 20px 0; }
 .question p { font-weight: bold; }
 label { display: block; margin: 5px 0; }
