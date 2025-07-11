@@ -14,11 +14,11 @@ document.getElementById('quizForm').addEventListener('submit', function(e) {
     const percentage = Math.round((score / 20) * 100); // 10問なら / 100
     let message;
     if (percentage >= 80) {
-        message = `超タルタル！あなたはタルタル界のスター！(${percentage}%)`;
+        message = `あなたはタルタルですね(*´ω｀)(${percentage}%)`;
     } else if (percentage >= 50) {
-        message = `なかなかタルタル！もう少しでトップタルタラー！(${percentage}%)`;
+        message = `なかなかタルタルですね("ω")${percentage}%)`;
     } else {
-        message = `ちょっとタルタル。まだまだ成長の余地あり！(${percentage}%)`;
+        message = `タルタルじゃないな（;´д｀）(${percentage}%)`;
     }
 
     // 結果を表示
