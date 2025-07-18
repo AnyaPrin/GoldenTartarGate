@@ -8,6 +8,7 @@ body {
     background-color: darkseagreen;
 }
 .container {
+    color: white;
     text-align: center;
     background: darkseagreen;
     padding: 20px;
