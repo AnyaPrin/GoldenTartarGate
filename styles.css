@@ -6,11 +6,9 @@ body {
     font-family: Arial, sans-serif;
     background-color: darkseagreen;
 }
-.bgimage{
-    background-image: "GoldTartar.png"
-}
 
 .container {
+    background-image: "GoldTartar.png"
     color: white;
     text-align: center;
     background: darkseagreen;
