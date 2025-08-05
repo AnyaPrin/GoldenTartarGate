@@ -6,9 +6,8 @@ body {
     font-family: Arial, sans-serif;
     background-color: darkseagreen;
 }
-
 .container {
-    background-image: "GoldTartar.png"
+    background-image: url('GoldTartar.png');
     color: white;
     text-align: center;
     background: darkseagreen;
