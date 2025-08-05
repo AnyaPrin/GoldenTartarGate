@@ -7,10 +7,10 @@ body {
     background-color: darkseagreen;
 }
 .container {
-    background-image: url('GoldTartarGate.png');
     color: white;
     text-align: center;
-    background: darkseagreen;
+    background: black;
+    background-image: url('GoldTartarGate.png');
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
