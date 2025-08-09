@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>迷路ゲーム（20x20）</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            background: black;
+        }
+        #status {
+            font-family: monospace;
+            margin-top: 10px;
+            color: white;
+            background: black;
+            padding: 5px;
+        }
+        #mapCanvas {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body style="background: black;">
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <canvas id="mapCanvas" width="200" height="200"></canvas>
+    <div id="status">Position: (1, 1) | Direction: north</div>
+    <script>
+        const gameCanvas = document.getElementById('gameCanvas');
+        const mapCanvas = document.getElementById('mapCanvas');
+        const ctx = gameCanvas.getContext('2d');
+        const mapCtx = mapCanvas.getContext('2d');
+        const statusDiv = document.getElementById('status');
+
+        // 迷路生成（20x20）
+        function generateMaze() {
+            const width = 20, height = 20;
+            const maze = Array(height).fill().map(() => Array(width).fill(1));
+
+            function carve(x, y) {
+                maze[y][x] = 0; // 通路
+                const directions = [[0, -1], [1, 0], [0, 1], [-1, 0]]; // 北, 東, 南, 西
+                // ランダムにシャッフル
+                for (let i = directions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [directions[i], directions[j]] = [directions[j], directions[i]];
+                }
+                for (const [dx, dy] of directions) {
+                    const nx = x + dx * 2, ny = y + dy * 2;
+                    if (nx >= 0 && nx < width && ny >= 0 && ny < height && maze[ny][nx] === 1) {
+                        maze[y + dy][x + dx] = 0; // 中間も通路
+                        carve(nx, ny);
+                    }
+                }
+            }
+
+            carve(1, 1); // 開始位置
+            console.log('迷路生成:', maze.map(row => row.join('')).join('\n'));
+            return maze;
+        }
+
+        const maze = generateMaze();
+
+        // プレイヤーの状態
+        const player = {
+            x: 1,
+            y: 1,
+            direction: 'north'
+        };
+
+        // 描画関数
+        function draw() {
+            try {
+                // メインCanvas（3D視点）
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+                console.log('Main Canvas cleared');
+
+                // 視界（前方3マス）
+                const view = getView();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 4;
+
+                // 正方形の設定
+                const centerX = gameCanvas.width / 2; // 200
+                const centerY = gameCanvas.height / 2; // 200
+                const sizes = [
+                    { name: 'large', size: 200, depth: 0 }, // 手前
+                    { name: 'middle', size: 150, depth: 1 },
+                    { name: 'small', size: 100, depth: 2 } // 奥
+                ];
+
+                // 正方形と横道の情報
+                const squares = [];
+                const hasSidePath = [];
+                let wallFound = false;
+
+                // 壁と横道の判定
+                for (let depth = 0; depth < 3; depth++) {
+                    const x = view[depth].x;
+                    const y = view[depth].y;
+                    const size = sizes[depth].size;
+                    const offsetX = centerX - size / 2;
+                    const offsetY = centerY - size / 2;
+
+                    if (!wallFound && (x < 0 || x >= 20 || y < 0 || y >= 20 || maze[y][x] === 1 || depth === 2)) {
+                        ctx.beginPath();
+                        ctx.rect(offsetX, offsetY, size, size);
+                        ctx.stroke();
+                        squares.push({
+                            depth,
+                            topLeft: [offsetX, offsetY],
+                            topRight: [offsetX + size, offsetY],
+                            bottomLeft: [offsetX, offsetY + size],
+                            bottomRight: [offsetX + size, offsetY + size]
+                        });
+                        wallFound = true;
+                        console.log(`Drew square at depth ${depth}: (${offsetX}, ${offsetY}, ${size})`);
+                    }
+
+                    // 横道判定
+                    let leftWall = true, rightWall = true;
+                    let leftX = x, leftY = y, rightX = x, rightY = y;
+                    switch (player.direction) {
+                        case 'north': leftX--; rightX++; break;
+                        case 'east': leftY--; rightY++; break;
+                        case 'south': leftX++; rightX--; break;
+                        case 'west': leftY++; rightY--; break;
+                    }
+                    if (leftX >= 0 && leftX < 20 && leftY >= 0 && leftY < 20) {
+                        leftWall = maze[leftY][leftX] === 1;
+                    }
+                    if (rightX >= 0 && rightX < 20 && rightY >= 0 && rightY < 20) {
+                        rightWall = maze[rightY][rightX] === 1;
+                    }
+                    hasSidePath[depth] = !leftWall || !rightWall;
+                    console.log(`深度${depth}: 左壁=${leftWall}, 右壁=${rightWall}, 横道=${hasSidePath[depth]}`);
+                }
+
+                // 斜めの線
+                for (let depth = 0; depth < 2; depth++) {
+                    if (!hasSidePath[depth + 1]) {
+                        const current = squares.find(s => s.depth === depth);
+                        const next = squares.find(s => s.depth === depth + 1);
+                        if (current && next) {
+                            ctx.beginPath();
+                            ctx.moveTo(current.topLeft[0], current.topLeft[1]);
+                            ctx.lineTo(next.topLeft[0], next.topLeft[1]);
+                            ctx.moveTo(current.topRight[0], current.topRight[1]);
+                            ctx.lineTo(next.topRight[0], next.topRight[1]);
+                            ctx.moveTo(current.bottomLeft[0], current.bottomLeft[1]);
+                            ctx.lineTo(next.bottomLeft[0], next.bottomLeft[1]);
+                            ctx.moveTo(current.bottomRight[0], current.bottomRight[1]);
+                            ctx.lineTo(next.bottomRight[0], next.bottomRight[1]);
+                            ctx.stroke();
+                            console.log(`Drew lines between depth ${depth} and ${depth + 1}`);
+                        }
+                    }
+                }
+
+                // デバッグ情報（メインCanvas）
+                ctx.fillStyle = '#fff';
+                ctx.font = '16px monospace';
+                ctx.fillText(`Pos: (${player.x}, ${player.y})`, 10, 20);
+                ctx.fillText(`Dir: ${player.direction}`, 10, 40);
+                ctx.fillText(`Side paths: ${hasSidePath.join(', ')}`, 10, 60);
+
+                // マッピング（2D地図）
+                mapCtx.fillStyle = '#000';
+                mapCtx.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
+                console.log('Map Canvas cleared');
+                const cellSize = 10; // 20x20で200x200
+                for (let y = 0; y < 20; y++) {
+                    for (let x = 0; x < 20; x++) {
+                        mapCtx.fillStyle = maze[y][x] === 1 ? '#555' : '#000';
+                        mapCtx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                        mapCtx.strokeStyle = '#333';
+                        mapCtx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                    }
+                }
+
+                // プレイヤー位置（赤い点）
+                mapCtx.fillStyle = 'red';
+                mapCtx.beginPath();
+                mapCtx.arc(player.x * cellSize + cellSize / 2, player.y * cellSize + cellSize / 2, 3, 0, Math.PI * 2);
+                mapCtx.fill();
+
+                // 方向（矢印）
+                mapCtx.strokeStyle = 'white';
+                mapCtx.lineWidth = 2;
+                mapCtx.beginPath();
+                const px = player.x * cellSize + cellSize / 2;
+                const py = player.y * cellSize + cellSize / 2;
+                let dx = 0, dy = 0;
+                switch (player.direction) {
+                    case 'north': dy = -1; break;
+                    case 'east': dx = 1; break;
+                    case 'south': dy = 1; break;
+                    case 'west': dx = -1; break;
+                }
+                mapCtx.moveTo(px, py);
+                mapCtx.lineTo(px + dx * cellSize / 2, py + dy * cellSize / 2);
+                mapCtx.stroke();
+                console.log(`Map player at (${player.x}, ${player.y}), direction: ${player.direction}`);
+
+                // ステータス更新
+                statusDiv.textContent = `Position: (${player.x}, ${player.y}) | Direction: ${player.direction}`;
+            } catch (e) {
+                console.error('Draw error:', e);
+            }
+        }
+
+        // 視界の取得
+        function getView() {
+            const view = [];
+            let x = player.x;
+            let y = player.y;
+            let dx, dy;
+
+            switch (player.direction) {
+                case 'north': dx = 0; dy = -1; break;
+                case 'east': dx = 1; dy = 0; break;
+                case 'south': dx = 0; dy = 1; break;
+                case 'west': dx = -1; dy = 0; break;
+            }
+
+            for (let i = 0; i < 3; i++) {
+                x += dx;
+                y += dy;
+                view.push({ x, y });
+            }
+            console.log('視界:', view);
+            return view;
+        }
+
+        // 移動処理
+        function moveForward() {
+            try {
+                let newX = player.x;
+                let newY = player.y;
+
+                switch (player.direction) {
+                    case 'north': newY--; break;
+                    case 'east': newX++; break;
+                    case 'south': newY++; break;
+                    case 'west': newX--; break;
+                }
+
+                if (newX >= 0 && newX < 20 && newY >= 0 && newY < 20 && maze[newY][newX] !== 1) {
+                    player.x = newX;
+                    player.y = newY;
+                    console.log(`移動: (${player.x}, ${player.y})`);
+                } else {
+                    console.log(`移動不可: (${newX}, ${newY}) は壁または範囲外`);
+                }
+                draw();
+            } catch (e) {
+                console.error('Move error:', e);
+            }
+        }
+
+        // 入力処理
+        document.addEventListener('keydown', (e) => {
+            try {
+                console.log('キー入力:', e.key);
+                switch (e.key) {
+                    case 'ArrowUp':
+                        console.log('前進');
+                        moveForward();
+                        break;
+                    case 'ArrowLeft':
+                        player.direction = { north: 'west', east: 'north', south: 'east', west: 'south' }[player.direction];
+                        console.log(`方向変更: ${player.direction}`);
+                        draw();
+                        break;
+                    case 'ArrowRight':
+                        player.direction = { north: 'east', east: 'south', south: 'west', west: 'north' }[player.direction];
+                        console.log(`方向変更: ${player.direction}`);
+                        draw();
+                        break;
+                }
+            } catch (e) {
+                console.error('Key error:', e);
+            }
+        });
+
+        // フォーカス確保
+        document.body.focus();
+        console.log('Body focused');
+
+        // 初期描画
+        draw();
+    </script>
+</body>
+</html>
