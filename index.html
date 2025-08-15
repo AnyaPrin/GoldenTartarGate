@@ -1,50 +1,174 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
+  <head>
     <meta charset="UTF-8">
-    <title>Tartar Degree Test - Questions</title>
-    <link rel="stylesheet" href="styles.css">    
-</head>
-<body>
-    <div class="container">
-    <a href="test04.html">TEST04: Camera Control Test</a>
-        <br>
-    <a href="test15.html">TEST15: Dungeon Test</a>
-    <a href="dungeon0.2.4.html">TEST20: Dungeon Walking</a><br>
-    <a href="kojiscase.html">TEST21: Koji's Case</a>
-        
-    </div>
-
-    <div class="container">
-        <form id="quizForm">
-        <div class="question">
-                <p>お茶は</p>
-                <label><input type="radio" name="q2" value="0"> いらぬ</label>
-                <label><input type="radio" name="q2" value="5"> いらない</label>
-                <label><input type="radio" name="q2" value="10"> にゃー</label>
-            </div>
-        <div class="question">
-                <p>カレーは</p>
-                <label><input type="radio" name="q2" value="0"> うまー(*'▽')。</label>
-                <label><input type="radio" name="q2" value="5"> 時々</label>
-                <label><input type="radio" name="q2" value="10"> にゃー！</label>
-            </div>
-        <div class="question">
-                <p>ガルカは</p>
-                <label><input type="radio" name="q2" value="0"> 肉</label>
-                <label><input type="radio" name="q2" value="5"> 時々</label>
-                <label><input type="radio" name="q2" value="10"> にゃー！</label>
-            </div>
-
-            <button type="submit">結果を見る</button>
-        </form>
-        <div id="result" style="display: none;">
-            <h2>あなたのタルタル度は...</h2>
-            <p id="score"></p>
-            <a href="index.html">もう一度挑戦</a>
-            <a href="../index.html">ホームに戻る</a>
-        </div>
-    </div>
-    <script src="script.js"></script>
-</body>
+    <title>Golden TarTar Gate</title>
+    <style>
+      :root {
+	  --bg-color: #121218;
+	  --panel-color: #2d333b;
+	  --text-color: #ffffff;
+	  --accent-blue: #2f81f7;
+	  --accent-green: #2d333b;
+	  --border-color: #444c56;
+	  --shadow: 0 4px 24px 0 rgba(0,0,0,0.15);
+      }
+      body {
+	  background-image: url('GoldTartarGate.png');
+	  color: var(--text-color);
+	  font-family: 'Segoe UI', 'Meiryo', 'Arial', sans-serif;
+	  margin: 24px;
+	  min-height: 100vh;
+	  display: flex;
+	  flex-direction: column;
+	  align-items: left;
+	  padding: 40px, 40px, 40px, 40px; 
+      }
+      header {
+	  width: 100%;
+	  background: var(--panel-color);
+	  background-image: url('GoldTartarGate.png');	  
+	  padding: 16px 0 8px 0;
+	  box-shadow: var(--shadow);
+	  text-align: center;
+	  border-bottom: 1px solid var(--border-color);
+	  border-radius: 16px;
+      }
+      header h1 {
+	  margin: 32px;
+	  font-size: 2.2rem;
+	  letter-spacing: 2px;
+      }
+      main {
+	  width: 90%;
+	  max-width: 600px;
+	  margin-top: 40px;
+	  padding: 32px 24px 24px 24px;
+	  text-align: center;
+      }    
+      .container{
+	  width: 25%;
+	  color: white;
+	  text-align: left;
+	  padding: 20px;
+	  border-radius: 10px;
+	  gap:20px;
+	  margin:10px;
+      }
+      .quiz{
+	  width: 280px;
+	  color: white;
+	  text-align: left;
+	  padding: 20px;
+	  border-radius: 10px;
+	  background-color: rgba(0,2,2,0.25);
+	  gap:20px;
+	  margin:10px;
+      }
+      h1 { color: white; }
+      a, button {
+	  display: inline-block;
+	  padding: 10px 20px;
+	  background-color: darkgreen;
+	  color: white;
+	  text-decoration: none;
+	  border: none;
+	  border-radius: 5px;
+	  cursor: pointer;
+	  margin: 10px;
+      }
+      a:hover, button:hover { background-color: darkslateblue; }
+      .question { margin: 20px 0;
+		  gap:10px;}
+      .question p { font-weight: bold;
+		    gap:10px;}
+      label { display: block; margin: 5px 0; }
+      .percent
+      {
+	  font-size:54pt;
+	  text-align:right;
+      }
+      .hiddenlinks {display:none;}
+    </style>
+    
+  </head>
+  <body>
+    <header>
+      <h1>GOLDEN TARTAR GATE</H1>
+      <p> 完璧なプロポーションをもつタルタルのみが通れるという伝説の門</p>
+    </header>
+    <main>
+      <div class="hiddenlinks">
+	<a href="test04.html">TEST04: Camera Control Test</a><br>
+	<a href="test15.html">TEST15: Dungeon Test</a>
+	<a href="dungeon0.2.4.html">TEST20: Dungeon Walking</a><br>
+	<a href="kojiscase.html">TEST21: Koji's Case</a>
+      </div>
+      <div class="quiz">
+	<form id="quizForm" >
+          <div class="question">
+            <p>お茶(*”з”)_旦~~</p>
+            <label><input type="radio" name="q1" value="5"> いらぬ</label>
+            <label><input type="radio" name="q1" value="0"> いらない</label>
+            <label><input type="radio" name="q1" value="10"> にゃー</label>
+          </div>
+          <div class="question">
+            <p>カレーは</p>
+            <label><input type="radio" name="q2" value="10"> うまー(*'▽')。</label>
+            <label><input type="radio" name="q2" value="0"> 時々</label>
+            <label><input type="radio" name="q2" value="5"> にゃー！</label>
+          </div>
+          <div class="question">
+            <p>ガルカは</p>
+            <label><input type="radio" name="q3" value="0"> 肉</label>
+            <label><input type="radio" name="q3" value="10"> 風</label>
+            <label><input type="radio" name="q3" value="5"> 猫</label>
+          </div>
+          <button type="submit">結果を見る</button>
+	</form>
+	<div id="result" style="display: none;">
+          <h2>あなたのタルタル度は...</h2>
+          <div id="percentage" class="percent"></div>
+          <p id="score"></p>
+          <a href="../index.html">ホームに戻る</a>
+	</div>
+      </div>
+      <script>
+	document.getElementById('quizForm').addEventListener('submit', function(e) {
+	    e.preventDefault();
+	    let score = 0;
+	    for (let i = 1; i <= 3; i++) {
+		const answer = document.querySelector(`input[name="q${i}"]:checked`);
+		if (answer) {
+		    score += parseInt(answer.value);
+		}
+	    }
+	    const per = Math.round((score / 30) * 100);
+	    let percentage = `${per}%`; 
+	    let message;
+	    if (per == 100) {
+		message = `なんてこった！（コブラ風;´･ω･)`;
+	    } else if (80 <= per && per < 100) {
+		message = `あなたはタルタルですね(*´ω｀)`;
+	    } else if (per >= 50) {
+		message = `なかなかタルタルですな(-ω-)`;
+	    } else {
+		message = `タルタルじゃないな！（"Д";)`;
+	    }
+	    // 結果を表示
+	    if (per === 100) {
+		document.querySelector('.hiddenlinks').style.display = 'block';
+	    }
+	    document.getElementById('percentage').innerText = percentage;
+	    document.getElementById('score').innerText = message;
+	    document.getElementById('result').style.display = 'block';	    
+	    document.getElementById('quizForm').style.display = 'none';
+	});
+      </script>
+    </main>
+    <footer>
+    </footer>
+  </body>
 </html>
+
+
