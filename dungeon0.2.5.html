@@ -393,9 +393,9 @@
               let wy = wx / 5 * 4 ; 
               if (isLWall && isRWall) {
 		  if (isFWall)
-		      gCtx.drawImage(wallImg01 ,wx, wy, wwsz, whsz);		      
+		      gCtx.drawImage(wallImg02 ,wx, wy, wwsz, whsz);		      
 		  else
-		      gCtx.drawImage(wallImg02 ,wx, wy, wwsz, whsz);
+		      gCtx.drawImage(wallImg01 ,wx, wy, wwsz, whsz);
               } else if (isLWall && !isRWall) {
 		  if (isFWall)
 		      gCtx.drawImage(wallImg04 ,wx, wy, wwsz, whsz);		      
@@ -403,7 +403,6 @@
 		      gCtx.drawImage(wallImg03 ,wx, wy, wwsz, whsz);
               } else if (!isLWall && isRWall) {
 		  gCtx.drawImage(isFWall ? wallImg06 : wallImg05, wx, wy, wwsz, whsz);
-		  
               } else if (!isLWall && !isRWall) {
 		  gCtx.drawImage(isFWall ? wallImg08 : wallImg07, wx, wy, wwsz, whsz);
               }
